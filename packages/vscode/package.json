@@ -1,0 +1,43 @@
+{
+    "name": "lucy-language",
+    "displayName": "Lucy Language",
+    "description": "Syntax highlighting for lucy",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.36.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "publisher": "matthewp",
+    "contributes": {
+        "languages": [{
+            "id": "lucy",
+            "aliases": ["Lucy", "lucy"],
+            "extensions": [".lucy"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [
+            {
+                "language": "lucy",
+                "scopeName": "source.lucy",
+                "path": "./syntaxes/lucy.tmLanguage.json"
+            },
+            {
+                "injectTo": [
+                    "source.js",
+                    "source.js.jsx",
+                    "source.jsx",
+                    "source.ts",
+                    "source.tsx",
+                    "text.html.basic"
+                ],
+                "scopeName": "inline.lucy",
+                "path": "./syntaxes/inline-lucy.json",
+                "embeddedLanguages": {
+                    "source.lucy": "lucy"
+                }
+            }
+        ]
+    }
+}

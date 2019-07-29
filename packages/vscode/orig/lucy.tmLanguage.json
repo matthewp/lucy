@@ -1,0 +1,39 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Lucy",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+    },
+    {
+      "include": "#arrow-pipeline"
+    }
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.lucy",
+				"match": "\\b(if|while|for|return)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.lucy",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.lucy",
+					"match": "\\\\."
+				}
+			]
+    },
+    "arrow-pipeline": {
+      "name": "keyword.control.lucy",
+      "match": "\\b(=>)\\b"
+    }
+	},
+	"scopeName": "source.lucy"
+}
