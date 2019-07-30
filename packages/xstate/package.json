@@ -1,31 +1,24 @@
 {
-  "name": "xstate",
+  "name": "@lucy/xstate",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "lib/main.js",
+  "module": "lib/main.js",
   "scripts": {
-    "build": "pika-pack build",
+    "build": "rollup -c rollup.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Matthew Phillips",
   "license": "BSD-2-Clause",
   "peerDependencies": {
+    "@lucy/parser": "^1.0.0",
     "xstate": "^4.6.7"
   },
   "devDependencies": {
-    "@pika/pack": "^0.4.0",
-    "@pika/plugin-build-web": "^0.5.1",
-    "@pika/plugin-standard-pkg": "^0.5.1"
-  },
-  "@pika/pack": {
-    "pipeline": [
-      [
-        "@pika/plugin-standard-pkg"
-      ],
-      [
-        "@pika/plugin-build-web"
-      ]
-    ]
+    "rollup": "^1.17.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "xstate": "^4.6.7"
   }
 }

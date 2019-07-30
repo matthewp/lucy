@@ -1,5 +1,5 @@
 {
-  "name": "parser",
+  "name": "@lucy/parser",
   "version": "1.0.0",
   "description": "",
   "main": "lib/dsl.js",
@@ -7,6 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Matthew Phillips",
   "license": "BSD-2-Clause"
 }
