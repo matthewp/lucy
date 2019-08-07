@@ -1,0 +1,11 @@
+dist: trusty
+language: node_js
+node_js: node
+addons:
+  chrome: stable
+before_script:
+  - npm run server &
+  - npm run build:xstate
+  - sleep 3
+script:
+  - npm run test-xstate
