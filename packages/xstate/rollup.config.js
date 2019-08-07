@@ -6,7 +6,7 @@ import pkg from './package.json';
 export default {
   input: pkg.module,
   output: {
-    file: 'bundle.js',
+    file: 'dist/lucy-xstate.js',
     format: 'es'
   },
   plugins: [

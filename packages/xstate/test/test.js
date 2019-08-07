@@ -1,4 +1,4 @@
-import { machine } from '../bundle.js';
+import { machine } from '../dist/lucy-xstate.js';
 
 QUnit.module('@lucy/xstate');
 
