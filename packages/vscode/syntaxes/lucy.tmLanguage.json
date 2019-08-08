@@ -64,6 +64,15 @@
 							"name": "entity.name.type.class.lucy"
 						}
 					}
+				},
+				{
+					"name": "meta.class.identifier.lucy",
+					"match": "\\b(state)\\b",
+					"captures": {
+						"1": {
+							"name": "storage.type.class.lucy"
+						}
+					}
 				}
 			]
 		},
