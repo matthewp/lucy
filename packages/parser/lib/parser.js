@@ -258,6 +258,18 @@ function parse(input, onHole) {
       continue;
     }
 
+    // Special case holes
+    if(char === '[') {
+      let nextIndex = current + HOLE.length;
+      let value = input.slice(current, nextIndex);
+      if(value === HOLE) {
+        word = value;
+        state.inWord = true;
+        current = nextIndex;
+        continue;
+      }
+    }
+
     // Transitions
     if(char === '=') {
       if(peek() === '>') {
