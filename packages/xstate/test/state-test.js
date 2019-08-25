@@ -35,4 +35,18 @@ export default function() {
       assert.equal(service.state.value, 'three', 'initial state set');
     });
   });
+
+  QUnit.test('States can immediately transition', assert => {
+    let m = machine`
+      initial state one {
+        => two
+      }
+
+      state two {}
+    `;
+
+    withService(m, service => {
+      assert.equal(service.state.value, 'two', 'went straight to two');
+    });
+  });
 }
