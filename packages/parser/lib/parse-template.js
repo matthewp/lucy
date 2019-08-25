@@ -1,5 +1,5 @@
 import { HOLE } from './constants.js';
-import { parse } from './parser.js';
+import { parse } from './parser2.js';
 
 function parseTemplate(strings, ...args) {
   let string = strings.join(HOLE);

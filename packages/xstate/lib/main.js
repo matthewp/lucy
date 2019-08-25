@@ -18,6 +18,21 @@ function createConfig(ast) {
     guards: {}
   };
 
+  function addGuard(node) {
+    options.guards[node.name] = node.getValue();
+  }
+
+  function addAction(actionNode, rightNode) {
+    let value = actionNode.getValue();
+    if(value && value.isAssign && value.isAssign()) {
+      value = assign({
+        [rightNode.property]: rightNode.value.value
+      });
+    }
+
+    options.actions[actionNode.name] = value;
+  }
+
   for(let node of ast.body) {
     if(node.isState()) {
       let state = {
@@ -58,7 +73,7 @@ function createConfig(ast) {
           state[child.transitionType].push(child.name);
         } else if(child.isInvoke()) {
           let invoke = {
-            src: child.callback
+            src: child.value.getValue()
           };
           for(let { event, target } of child.children) {
             invoke[invokeEventMap.get(event)] = { target };
@@ -80,9 +95,17 @@ function createConfig(ast) {
       }) : node.value; // TODO we don't support non-assigns yet.
       options.actions[node.name] = actionValue;
     } else if(node.isContext()) {
-      config.context = node.value;
+      config.context = node.getValue();
     } else if(node.isGuard()) {
-      options.guards[node.name] = node.callback;
+      addGuard(node);
+    } else if(node.isAssignment()) {
+      if(node.left.isGuard()) {
+        addGuard(node.left);
+      } else if(node.left.isAction()) {
+        addAction(node.left, node.right); 
+      }
+    } else {
+      throw new Error('Unknown type ' + node.type);
     }
   }
 
