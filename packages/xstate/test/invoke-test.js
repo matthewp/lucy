@@ -43,4 +43,28 @@ export default function() {
       assert.equal(service.state.value, 'fail', 'it failed');
     });
   });
+
+  QUnit.test('invoking machines works', assert => {
+    let childMachine = machine`
+      initial state start {
+        => end
+      }
+
+      final state end {}
+    `;
+
+    let parentMachine = machine`
+      initial state start {
+        invoke ${childMachine} {
+          done => end
+        }
+      }
+
+      final state end {}
+    `;
+
+    withService(parentMachine, service => {
+      assert.equal(service.state.value, 'end', 'got to the end state');
+    });
+  });
 }
