@@ -84,6 +84,10 @@ function createConfig(ast) {
         }
       }
 
+      if(node.final) {
+        state.type = 'final';
+      }
+
       config.states[node.name] = state;
 
       if(node.initial) {

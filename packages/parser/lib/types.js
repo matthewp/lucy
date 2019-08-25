@@ -108,10 +108,12 @@ export function createAssign({ args: [ property, value ] }) {
 
 export function createState(name, { modifiers }) {
   let initial = modifiers.has('initial');
+  let final = modifiers.has('final');
 
   return Object.create(stateType, {
     name: valueEnumerable(name),
     initial: valueEnumerable(initial),
+    final: valueEnumerable(final),
     children: valueEnumerable([])
   });
 }

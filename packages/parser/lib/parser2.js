@@ -7,7 +7,6 @@ import {
   addModifier,
   clearModifiers,
   addBinding,
-  addExpression,
   startTransition,
   resetTransition,
   isHole,
@@ -43,11 +42,11 @@ const bindings = new Map([
     create: createGuardNode
   }],
   ['state', {
-    modifiers: ['initial'],
+    modifiers: ['initial', 'final'],
     create: createStateNode
   }]
 ]);
-const modifiers = new Set(['initial']);
+const modifiers = new Set(['initial', 'final']);
 const methods = new Map([
   ['assign', {
     create: createAssignNode
