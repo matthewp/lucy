@@ -294,8 +294,6 @@ function parse(input, onExternal) {
     proceed();
   }
 
-  console.log('body', body);
-
   return {
     body
   };
