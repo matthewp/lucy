@@ -8,8 +8,8 @@ export default function() {
     let m = machine`
       context ${{count: 5}}
       action plusOne = assign count ${(ctx) => {
-        console.log('plus');
-        return ctx.count + 1 } }
+        return ctx.count + 1
+      }}
 
       initial state start {
         add => plusOne => start
