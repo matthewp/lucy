@@ -1,3 +1,4 @@
 node_modules/
+packages/site/_site
 pkg/
 dist/
