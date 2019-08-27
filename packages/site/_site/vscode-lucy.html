@@ -1,0 +1,76 @@
+
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VSCode Lucy</title>
+<link rel="stylesheet" href="styles/main.css">
+<link rel="stylesheet" href="styles/content.css">
+<link rel="stylesheet" href="styles/dracula-prism.css">
+
+<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<link rel="manifest" href="images/site.webmanifest">
+
+<body class="no-title">
+
+<nav class="container">
+  <ul>
+    <li><a href="./">Lucy</a></li><li>
+      
+      <a href="/language-overview.html">
+        
+          Language Overview
+        
+      </a>
+      
+    </li><li>
+      
+      <a href="/babel-plugin-xstate.html">
+        
+          Babel Plugin XState
+        
+      </a>
+      
+    </li><li>
+      
+      <a href="/prism-plugin.html">
+        
+          Prism Plugin
+        
+      </a>
+      
+    </li><li class="active">
+      
+        
+          VSCode Lucy
+        
+      
+    </li><li><a href="https://github.com/matthewp/lucy">GitHub</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="content container">
+    <p>Syntax highlighting and code completion for <a href="./">Lucy</a>.</p>
+<h1 id="installation"><a class="heading-anchor" href="#installation">#</a> Installation</h1>
+<p>Search for Lucy in the vscode marketplace install the extension.</p>
+<h1 id="highlighting"><a class="heading-anchor" href="#highlighting">#</a> Highlighting</h1>
+<p>The VSCode Lucy plugin is able to highlight files with the <code>.lucy</code> file extension and JavaScript using the <code>machine</code> tagged template function.</p>
+<p>For example:</p>
+<p><strong>example.lucy</strong></p>
+<pre class="language-lucy"><code class="language-lucy"><span class="highlight-line"><span class="token keyword">initial</span> <span class="token keyword">state</span> <span class="token class-name">start</span> <span class="token punctuation">{</span></span><br><span class="highlight-line">  complete <span class="token operator">=</span><span class="token operator">></span> end</span><br><span class="highlight-line"><span class="token punctuation">}</span></span><br><span class="highlight-line"></span><br><span class="highlight-line"><span class="token keyword">final</span> <span class="token keyword">state</span> <span class="token class-name">end</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span></code></pre>
+<p>And when embedded in JavaScript:</p>
+<p><strong>example.js</strong></p>
+<pre class="language-js"><code class="language-js"><span class="highlight-line"><span class="token keyword">import</span> <span class="token punctuation">{</span> machine <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@lucy/xstate'</span><span class="token punctuation">;</span></span><br><span class="highlight-line"></span><br><span class="token keyword">const</span> exampleMachine <span class="token operator">=</span> machine<span class="token template-string"><span class="token template-punctuation string">`</span><span class="token lucy language-lucy"><br><span class="highlight-line">  <span class="token keyword">initial</span> <span class="token keyword">state</span> <span class="token class-name">start</span> <span class="token punctuation">{</span></span><br><span class="highlight-line">    complete <span class="token operator">=</span><span class="token operator">></span> end</span><br><span class="highlight-line">  <span class="token punctuation">}</span></span><br><span class="highlight-line"></span><br><span class="highlight-line">  <span class="token keyword">final</span> <span class="token keyword">state</span> <span class="token class-name">end</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span><br></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span></code></pre>
+<blockquote>
+<p>Important: The tagged template function <em>must</em> be named <code>machine</code> for highlighting to work in embedded JavaScript.</p>
+</blockquote>
+<h1 id="code-completion"><a class="heading-anchor" href="#code-completion">#</a> Code Completion</h1>
+<p>Coming Soon!</p>
+
+  </div>
+</main>
+
+<footer></footer>

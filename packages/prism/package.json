@@ -1,13 +1,12 @@
 {
-  "name": "@lucy/parser",
+  "name": "@lucy/prism",
   "version": "1.0.0",
   "description": "",
-  "main": "lib/dsl.js",
-  "module": "lib/dsl.js",
+  "main": "lib/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["FSM"],
+  "keywords": [],
   "author": "Matthew Phillips",
   "license": "BSD-2-Clause"
 }
