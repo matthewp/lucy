@@ -1,0 +1,36 @@
+---
+title: Lucy
+---
+
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }}</title>
+<link rel="stylesheet" href="styles/main.css">
+<link rel="stylesheet" href="styles/content.css">
+<link rel="stylesheet" href="styles/dracula-prism.css">
+
+<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<link rel="manifest" href="images/site.webmanifest">
+
+<body class="no-title">
+
+<nav class="container">
+  <ul>
+    <li><a href="./">Lucy</a></li>
+    <li><a href="./language-overview.html">Language overview</a></li>
+    <li><a href="./babel-plugin-xstate.html">Babel plugin</a></li>
+    <li><a href="https://github.com/matthewp/lucy">GitHub</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="content container">
+    {{ content | safe }}
+  </div>
+</main>
+
+<footer></footer>
