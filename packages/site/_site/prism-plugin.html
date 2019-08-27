@@ -1,0 +1,76 @@
+
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prism Plugin</title>
+<link rel="stylesheet" href="styles/main.css">
+<link rel="stylesheet" href="styles/content.css">
+<link rel="stylesheet" href="styles/dracula-prism.css">
+
+<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<link rel="manifest" href="images/site.webmanifest">
+
+<body class="no-title">
+
+<nav class="container">
+  <ul>
+    <li><a href="./">Lucy</a></li><li>
+      
+      <a href="/language-overview.html">
+        
+          Language Overview
+        
+      </a>
+      
+    </li><li>
+      
+      <a href="/babel-plugin-xstate.html">
+        
+          Babel Plugin XState
+        
+      </a>
+      
+    </li><li class="active">
+      
+        
+          Prism Plugin
+        
+      
+    </li><li>
+      
+      <a href="/vscode-lucy.html">
+        
+          VSCode Lucy
+        
+      </a>
+      
+    </li><li><a href="https://github.com/matthewp/lucy">GitHub</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="content container">
+    <p>Adds support for Lucy to the <a href="https://prismjs.com/">Prism</a> syntax highlighter. Highlighting works for Lucy blocks and when Lucy is embedded in JavaScript <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_templates">tagged templates</a>.</p>
+<h1 id="installation"><a class="heading-anchor" href="#installation">#</a> Installation</h1>
+<p>Install <code>@lucy/prism</code> from npm:</p>
+<pre class="language-bash"><code class="language-bash"><span class="highlight-line"><span class="token function">npm</span> <span class="token function">install</span> @lucy/prism</span></code></pre>
+<p>Or with Yarn:</p>
+<pre class="language-bash"><code class="language-bash"><span class="highlight-line"><span class="token function">yarn</span> <span class="token function">add</span> @lucy/prism</span></code></pre>
+<h1 id="lucy"><a class="heading-anchor" href="#lucy">#</a> Lucy</h1>
+<p>To use highlighting with Lucy blocks use the <code>lucy</code> export like so:</p>
+<pre class="language-js"><code class="language-js"><span class="highlight-line"><span class="token keyword">const</span> <span class="token punctuation">{</span> lucy <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'@lucy/prism'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span><br><span class="highlight-line"><span class="token keyword">const</span> Prism <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'prismjs'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span><br><span class="highlight-line"></span><br><span class="highlight-line"><span class="token function">lucy</span><span class="token punctuation">(</span>Prism<span class="token punctuation">)</span><span class="token punctuation">;</span></span></code></pre>
+<p>Once you've down that you can use Prism as normal and code blocks marked with <code>language-lucy</code> will be highlighted like so:</p>
+<pre class="language-lucy"><code class="language-lucy"><span class="highlight-line"><span class="token keyword">state</span> <span class="token class-name">writing</span> <span class="token punctuation">{</span></span><br><span class="highlight-line">  pause <span class="token operator">=</span><span class="token operator">></span> break</span><br><span class="highlight-line"><span class="token punctuation">}</span></span><br><span class="highlight-line"></span><br><span class="highlight-line"><span class="token keyword">state</span> <span class="token class-name">break</span> <span class="token punctuation">{</span></span><br><span class="highlight-line">  end <span class="token operator">=</span><span class="token operator">></span> writing  </span><br><span class="highlight-line"><span class="token punctuation">}</span></span></code></pre>
+<h1 id="javascript"><a class="heading-anchor" href="#javascript">#</a> JavaScript</h1>
+<p><code>@lucy/prism</code> also works withing JavaScript tagged template literals using <code>machine</code> like so:</p>
+<pre class="language-js"><code class="language-js"><span class="highlight-line"><span class="token keyword">const</span> <span class="token punctuation">{</span> lucyTemplate <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'@lucy/prism'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span><br><span class="highlight-line"><span class="token keyword">const</span> Prism <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'prismjs'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span><br><span class="highlight-line"></span><br><span class="highlight-line"><span class="token function">lucyTemplate</span><span class="token punctuation">(</span>Prism<span class="token punctuation">)</span><span class="token punctuation">;</span></span></code></pre>
+<p>Which results in highlighting inside code that uses the <code>machine</code> function like so:</p>
+<pre class="language-js"><code class="language-js"><span class="highlight-line"><span class="token keyword">import</span> <span class="token punctuation">{</span> machine <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@lucy/xstate'</span><span class="token punctuation">;</span></span><br><span class="highlight-line"></span><br><span class="token keyword">const</span> codingMachine <span class="token operator">=</span> machine<span class="token template-string"><span class="token template-punctuation string">`</span><span class="token lucy language-lucy"><br><span class="highlight-line">  <span class="token keyword">initial</span> <span class="token keyword">state</span> <span class="token class-name">implement</span> <span class="token punctuation">{</span></span><br><span class="highlight-line">    finish <span class="token operator">=</span><span class="token operator">></span> test</span><br><span class="highlight-line">  <span class="token punctuation">}</span></span><br><span class="highlight-line"></span><br><span class="highlight-line">  <span class="token keyword">state</span> <span class="token class-name">test</span> <span class="token punctuation">{</span></span><br><span class="highlight-line">    finish <span class="token operator">=</span><span class="token operator">></span> release</span><br><span class="highlight-line">  <span class="token punctuation">}</span></span><br><span class="highlight-line"></span><br><span class="highlight-line">  <span class="token keyword">final</span> <span class="token keyword">state</span> <span class="token class-name">release</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span><br></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span></code></pre>
+
+  </div>
+</main>
+
+<footer></footer>

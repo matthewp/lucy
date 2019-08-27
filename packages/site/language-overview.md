@@ -1,6 +1,7 @@
 ---
 layout: page.njk
 title: Language Overview
+tags: page
 permalink: language-overview.html
 ---
 

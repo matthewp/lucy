@@ -1,6 +1,5 @@
 const pluginSyntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
-const addLucy = require('./prism-lucy.js');
-const addLucyTemplate = require('./prism-lucy-template.js');
+const lucyPrism = require('@lucy/prism');
 const markdownIt = require('markdown-it');
 const markdownItTocAndAnchor = require('markdown-it-toc-and-anchor').default;
 
@@ -11,8 +10,8 @@ module.exports = function(eleventyConfig) {
 
   eleventyConfig.addPlugin(pluginSyntaxHighlight, {
     init({ Prism }) {
-      addLucy(Prism);
-      addLucyTemplate(Prism);
+      lucyPrism.lucy(Prism);
+      lucyPrism.lucyTemplate(Prism);
     }
   });
 
