@@ -197,7 +197,7 @@ function parse(input, onExternal) {
         let word = state.word;
 
         if(isHole(state)) {
-          console.info('Do something when there is whitespace after a hole');
+          // TODO should we be doing something with this?
         } else if(modifiers.has(word)) {
           addModifier(state, word);
         } else if(bindings.has(word)) {
