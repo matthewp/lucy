@@ -90,6 +90,24 @@ final state clean {
 }
 ```
 
+## Nested state
+
+States can contain their own states. This allows better grouping of states within your application. Just as with top-level states, nested states can be marked as __initial__ and __final__.
+
+```lucy
+state lunch {
+  initial state cook {
+    done => eating
+  }
+
+  state eat {
+    done => loadDiswasher
+  }
+
+  final state loadDiswasher {}
+}
+```
+
 # Transitions
 
 In Lucy you can define a transition between states. The fat-arrow (`=>`) symbol is used to pipe from one step to the other. A transition can contain:
