@@ -1,12 +1,90 @@
-import { Machine, assign } from 'xstate';
-import { parseTemplate } from '@lucy/parser';
 
-const invokeEventMap = new Map([
-  ['done', 'onDone'],
-  ['error', 'onError']
-]);
+module.exports = createConfig;
 
-function createConfig(ast) {
+function createConfig(t, ast) {
+  let id = t.stringLiteral('unknown');
+  let context = t.objectExpression([]);
+
+  let configProps = [
+    t.objectProperty(t.identifier('id'), id),
+    t.objectProperty(t.identifier('context'), context)
+  ];
+
+  let optionsProps = [];
+
+  function process(configProps, state, nodes) {
+    let statesProps = [];
+
+    for(let node of nodes) {
+      if(node.isState()) {
+        let stateProps = [];
+        let onProps = [];
+
+        if(node.initial) {
+          state.initial = node.name;
+        }
+
+        for(let child of node.children) {
+          if(child.isTransition()) {
+            let transProps = [
+              t.objectProperty(t.identifier('target'),
+                t.stringLiteral(child.target))
+            ];
+
+
+            onProps.push(
+              t.objectProperty(
+                t.stringLiteral(child.event),
+                t.objectExpression(transProps)
+              )
+            );
+          }
+        }
+
+        // If there are any ons, add them
+        if(onProps.length) {
+          stateProps.push(
+            t.objectProperty(
+              t.identifier('on'),
+              t.objectExpression(onProps)
+            )
+          );
+        }
+
+        if(stateProps.length) {
+          statesProps.push(
+            t.objectProperty(
+              t.stringLiteral(node.name),
+              t.objectExpression(stateProps)
+            )
+          );
+        }
+      }
+    }
+
+    if(statesProps.length) {
+      configProps.push(t.objectProperty(
+        t.identifier('states'),
+        t.objectExpression(statesProps)
+      ));
+    }
+
+    if(state.initial) {
+      configProps.push(
+        t.objectProperty(t.identifier('initial'), t.stringLiteral(state.initial))
+      );
+    }
+  }
+
+  process(configProps, {}, ast.body);
+  
+  let config = t.objectExpression(configProps);
+  let options = t.objectExpression(optionsProps);
+
+  return [config, options];
+
+  /*
+
   let config = {
     id: 'unknown',
     context: {},
@@ -124,18 +202,5 @@ function createConfig(ast) {
   process(config, ast.body);
 
   return [config, options];
+  */
 }
-
-function machineConfig() {
-  let ast = parseTemplate.apply(null, arguments);
-  return createConfig(ast);
-}
-
-function machine() {
-  let [config, options] = machineConfig.apply(null, arguments);
-  return Machine(config, options);
-}
-
-export {
-  machine
-};
