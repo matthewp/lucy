@@ -1,8 +1,8 @@
 {
   "name": "@lucy/xstate",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "lib/main.js",
+  "main": "dist/lucy-xstate.cjs",
   "module": "lib/main.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
@@ -12,7 +12,7 @@
   "author": "Matthew Phillips",
   "license": "BSD-2-Clause",
   "peerDependencies": {
-    "@lucy/parser": "^1.0.0",
+    "@lucy/parser": "^0.1.0",
     "xstate": "^4.6.7"
   },
   "devDependencies": {

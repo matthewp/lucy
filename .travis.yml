@@ -5,7 +5,9 @@ addons:
   chrome: stable
 before_script:
   - npm run server &
+  - npm run build:parser
   - npm run build:xstate
   - sleep 3
 script:
   - npm run test-xstate
+  - npm run test-babel-xstate
