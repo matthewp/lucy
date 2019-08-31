@@ -22,5 +22,5 @@ export default function() {
       assert.equal(service.state.context.count, 6, 'assignment ran');
       assert.equal(service.state.value, 'start', 'still in the initial state');
     });
-  })
+  });
 }

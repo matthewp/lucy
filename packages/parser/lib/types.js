@@ -1,9 +1,6 @@
 import { getValue } from './value.js';
 
 const type = {
-  isEvent() {
-    return this.type === 'event';
-  },
   isAction() {
     return this.type === 'action';
   },
@@ -18,9 +15,6 @@ const type = {
   },
   isTransition() {
     return this.type === 'transition';
-  },
-  isTransitionAction() {
-    return this.type === 'transition-action';
   },
   isContext() {
     return this.type === 'context';
@@ -62,12 +56,10 @@ function extendType(typeName, desc) {
   return Object.create(type, desc);
 }
 
-const eventType = extendType('event', {});
 const actionType = extendType('action', {});
 const stateType = extendType('state', {});
 const guardType = extendType('guard', {});
 const transitionType = extendType('transition', {});
-const transitionActionType = extendType('transition-action', {});
 const contextType = extendType('context', {
   getValue: {
     value() {
@@ -85,12 +77,6 @@ const externalType = extendType('external', {
   }
 });
 const assignType = extendType('assign', {});
-
-export function createEvent(name) {
-  return Object.create(eventType, {
-    name: valueEnumerable(name)
-  });
-}
 
 export function createAction(name) {
   return Object.create(actionType, {
@@ -130,13 +116,6 @@ export function createTransition(event, target, actions, cond) {
     target: valueEnumerable(target),
     actions: valueEnumerable(actions),
     cond: valueEnumerable(cond)
-  });
-}
-
-export function createTransitionAction(name, type) {
-  return Object.create(transitionActionType, {
-    name: valueEnumerable(name),
-    transitionType: valueEnumerable(type)
   });
 }
 

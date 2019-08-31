@@ -45,10 +45,15 @@ function createConfig(ast) {
           if(child.isTransition()) {
             let transition;
             if(child.actions) {
-              transition = {
-                actions: Array.from(child.actions),
-                cond: child.cond
-              };
+              transition = {};
+
+              if(child.actions) {
+                transition.actions = Array.from(child.actions);
+              }
+
+              if(child.cond) {
+                transition.cond = child.cond;
+              }
   
               if(child.target) {
                 transition.target = child.target;
@@ -70,8 +75,6 @@ function createConfig(ast) {
             } else {
               state.on[child.event] = transition;
             }
-          } else if(child.isTransitionAction()) {
-            state[child.transitionType].push(child.name);
           } else if(child.isInvoke()) {
             let invoke = {
               src: child.value.getValue()
@@ -100,11 +103,6 @@ function createConfig(ast) {
         if(node.initial) {
           config.initial = node.name;
         }
-      } else if(node.isAction()) {
-        let actionValue = node.isAssignAction() ? assign({
-          [node.assign]: node.assignCallback
-        }) : node.value; // TODO we don't support non-assigns yet.
-        options.actions[node.name] = actionValue;
       } else if(node.isContext()) {
         config.context = node.getValue();
       } else if(node.isGuard()) {
