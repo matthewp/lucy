@@ -5,7 +5,7 @@ function isMachine(t, tag) {
   return t.isIdentifier(tag) && tag.name === 'machine';
 }
 
-function transform(t, path) {
+function transform(t, path, state) {
   let {
     quasi: { quasis, expressions }
   } = path.node;
@@ -14,7 +14,7 @@ function transform(t, path) {
   let args = expressions;
 
   let lucyAst = parseTemplate(strings, ...args);
-  let [configAst, optionsAst] = createConfig(t, lucyAst);
+  let [configAst, optionsAst, configState] = createConfig(t, lucyAst);
 
   let machineArgs = [ configAst ];
 
@@ -22,11 +22,14 @@ function transform(t, path) {
     machineArgs.push(optionsAst);
   }
 
+  // Assign any configuration onto the state object
+  Object.assign(state, configState);
+
   path.replaceWith(t.callExpression(t.identifier('Machine'), machineArgs));
 }
 
 module.exports = function(t, path, state) {
   if(state.lucyXstateImport && isMachine(t, path.node.tag)) {
-    transform(t, path);
+    transform(t, path, state);
   }
 };
