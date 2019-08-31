@@ -14,6 +14,50 @@ function createConfig(t, ast) {
 
   let optionsProps;
   let actionProps;
+  let guardProps;
+
+  function addAction(node) {
+    if(!actionProps) actionProps = [];
+    let actionNode = node.left;
+    let { name: actionName } = actionNode;
+
+    let value = actionNode.getValue();
+    if(value && value.isAssign && value.isAssign()) {
+      configState.needsXstateAssign = true;
+
+      let { property, value: { value: rawValue } } = value;
+
+      value = t.callExpression(t.identifier('assign'), [
+        t.objectExpression([
+          t.objectProperty(
+            t.stringLiteral(property),
+            rawValue
+          )
+        ])
+      ]);
+    }
+
+    actionProps.push(
+      t.objectProperty(
+        t.stringLiteral(actionName),
+        value
+      )
+    );
+  }
+
+  function addGuard(node) {
+    if(!guardProps) guardProps = [];
+
+    let guardNode = node.left;
+    let value = guardNode.getValue();
+
+    guardProps.push(
+      t.objectProperty(
+        t.stringLiteral(guardNode.name),
+        value
+      )
+    );
+  }
 
   function process(configProps, state, nodes) {
     let statesProps = [];
@@ -27,6 +71,15 @@ function createConfig(t, ast) {
           state.initial = node.name;
         }
 
+        if(node.final) {
+          stateProps.push(
+            t.objectProperty(
+              t.identifier('type'),
+              t.stringLiteral('final')
+            )
+          );
+        }
+
         for(let child of node.children) {
           if(child.isTransition()) {
             let transProps = [];
@@ -37,6 +90,15 @@ function createConfig(t, ast) {
                 t.objectProperty(
                   t.identifier('target'),
                   t.stringLiteral(child.target)
+                )
+              );
+            }
+
+            if(child.cond) {
+              transProps.push(
+                t.objectProperty(
+                  t.identifier('cond'),
+                  t.stringLiteral(child.cond)
                 )
               );
             }
@@ -81,32 +143,9 @@ function createConfig(t, ast) {
         }
       } else if(node.isAssignment()) {
         if(node.left.isAction()) {
-          if(!actionProps) actionProps = [];
-          let actionNode = node.left;
-
-          let value = actionNode.getValue();
-          if(value && value.isAssign && value.isAssign()) {
-            configState.needsXstateAssign = true;
-
-            let { property, value: { value: rawValue } } = value;
-
-            value = t.callExpression(t.identifier('assign'), [
-              t.objectExpression([
-                t.objectProperty(
-                  t.stringLiteral(property),
-                  rawValue
-                )
-              ])
-            ]);
-          }
-
-          actionProps.push(
-            t.objectProperty(
-              t.stringLiteral(node.left.name),
-              value
-            )
-          );
-
+          addAction(node);
+        } else if(node.left.isGuard()) {
+          addGuard(node);
         }
       } else if(node.isContext()) {
         let context = node.getValue();
@@ -140,6 +179,16 @@ function createConfig(t, ast) {
       t.objectProperty(
         t.identifier('actions'),
         t.objectExpression(actionProps)
+      )
+    );
+  }
+
+  if(guardProps) {
+    if(!optionsProps) optionsProps = [];
+    optionsProps.push(
+      t.objectProperty(
+        t.identifier('guards'),
+        t.objectExpression(guardProps)
       )
     );
   }
