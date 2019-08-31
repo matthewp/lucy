@@ -66,6 +66,7 @@ function createConfig(t, ast) {
       if(node.isState()) {
         let stateProps = [];
         let onProps = [];
+        let invokeProps = [];
 
         if(node.initial) {
           state.initial = node.name;
@@ -120,6 +121,32 @@ function createConfig(t, ast) {
                 t.objectExpression(transProps)
               )
             );
+          } else if(child.isInvoke()) {
+            invokeProps.push(
+              t.objectProperty(
+                t.identifier('src'),
+                child.value.getValue()
+              )
+            );
+
+            for(let c of child.children) {
+              let propName = c.event === 'done' ? 'onDone' :
+                c.event === 'error' ? 'onError' : null;
+
+              if(propName) {
+                invokeProps.push(
+                  t.objectProperty(
+                    t.identifier(propName),
+                    t.objectExpression([
+                      t.objectProperty(
+                        t.identifier('target'),
+                        t.stringLiteral(c.target)
+                      )
+                    ])
+                  )
+                );
+              }
+            }
           }
         }
 
@@ -133,14 +160,21 @@ function createConfig(t, ast) {
           );
         }
 
-        if(stateProps.length) {
-          statesProps.push(
+        if(invokeProps.length) {
+          stateProps.push(
             t.objectProperty(
-              t.stringLiteral(node.name),
-              t.objectExpression(stateProps)
+              t.identifier('invoke'),
+              t.objectExpression(invokeProps)
             )
           );
         }
+
+        statesProps.push(
+          t.objectProperty(
+            t.stringLiteral(node.name),
+            t.objectExpression(stateProps)
+          )
+        );
       } else if(node.isAssignment()) {
         if(node.left.isAction()) {
           addAction(node);
