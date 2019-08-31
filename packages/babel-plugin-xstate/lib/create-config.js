@@ -67,6 +67,7 @@ function createConfig(t, ast) {
         let stateProps = [];
         let onProps = [];
         let invokeProps = [];
+        let nestedStates = [];
 
         if(node.initial) {
           state.initial = node.name;
@@ -147,6 +148,8 @@ function createConfig(t, ast) {
                 );
               }
             }
+          } else if(child.isState()) {
+            nestedStates.push(child);
           }
         }
 
@@ -167,6 +170,10 @@ function createConfig(t, ast) {
               t.objectExpression(invokeProps)
             )
           );
+        }
+
+        if(nestedStates.length) {
+          process(stateProps, {}, nestedStates);
         }
 
         statesProps.push(
