@@ -4,10 +4,11 @@ module.exports = createConfig;
 function createConfig(t, ast) {
   let id = t.stringLiteral('unknown');
   let context = t.objectExpression([]);
+  let contextProp = t.objectProperty(t.identifier('context'), context);
 
   let configProps = [
     t.objectProperty(t.identifier('id'), id),
-    t.objectProperty(t.identifier('context'), context)
+    contextProp
   ];
 
   let optionsProps;
@@ -80,14 +81,37 @@ function createConfig(t, ast) {
       } else if(node.isAssignment()) {
         if(node.left.isAction()) {
           if(!actionProps) actionProps = [];
+          let actionNode = node.left;
+
+          let value = actionNode.getValue();
+          if(value && value.isAssign && value.isAssign()) {
+            let { property, value: { value: rawValue } } = value;
+
+            value = t.callExpression(t.identifier('assign'), [
+              t.objectExpression([
+                t.objectProperty(
+                  t.stringLiteral(property),
+                  rawValue
+                )
+              ])
+            ]);
+          }
 
           actionProps.push(
             t.objectProperty(
               t.stringLiteral(node.left.name),
-              node.left.getValue()
+              value
             )
           );
+
         }
+      } else if(node.isContext()) {
+        let context = node.getValue();
+        configProps.splice(
+          configProps.indexOf(contextProp),
+          1,
+          t.objectProperty(t.identifier('context'), context)
+        )
       }
     }
 
