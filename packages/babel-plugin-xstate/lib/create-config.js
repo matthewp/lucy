@@ -10,7 +10,8 @@ function createConfig(t, ast) {
     t.objectProperty(t.identifier('context'), context)
   ];
 
-  let optionsProps = [];
+  let optionsProps;
+  let actionProps;
 
   function process(configProps, state, nodes) {
     let statesProps = [];
@@ -26,11 +27,28 @@ function createConfig(t, ast) {
 
         for(let child of node.children) {
           if(child.isTransition()) {
-            let transProps = [
-              t.objectProperty(t.identifier('target'),
-                t.stringLiteral(child.target))
-            ];
+            let transProps = [];
 
+            // If there is a target to go to
+            if(child.target) {
+              transProps.push(
+                t.objectProperty(
+                  t.identifier('target'),
+                  t.stringLiteral(child.target)
+                )
+              );
+            }
+
+            if(child.actions) {
+              transProps.push(
+                t.objectProperty(
+                  t.identifier('actions'),
+                  t.arrayExpression(
+                    child.actions.map(str => t.stringLiteral(str))
+                  )
+                )
+              );
+            }
 
             onProps.push(
               t.objectProperty(
@@ -59,6 +77,17 @@ function createConfig(t, ast) {
             )
           );
         }
+      } else if(node.isAssignment()) {
+        if(node.left.isAction()) {
+          if(!actionProps) actionProps = [];
+
+          actionProps.push(
+            t.objectProperty(
+              t.stringLiteral(node.left.name),
+              node.left.getValue()
+            )
+          );
+        }
       }
     }
 
@@ -77,9 +106,19 @@ function createConfig(t, ast) {
   }
 
   process(configProps, {}, ast.body);
+
+  if(actionProps) {
+    if(!optionsProps) optionsProps = [];
+    optionsProps.push(
+      t.objectProperty(
+        t.identifier('actions'),
+        t.objectExpression(actionProps)
+      )
+    );
+  }
   
   let config = t.objectExpression(configProps);
-  let options = t.objectExpression(optionsProps);
+  let options = optionsProps ? t.objectExpression(optionsProps) : null;
 
   return [config, options];
 

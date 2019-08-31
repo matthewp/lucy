@@ -1,5 +1,6 @@
 import { machine } from './modules.js';
 
+import actionTests from './action-tests.js';
 import assignTests from './assign-test.js';
 import guardTests from './guard-test.js';
 import invokeTests from './invoke-test.js';
@@ -18,6 +19,7 @@ QUnit.module('@lucy/xstate', hooks => {
 
   stateTests();
   invokeTests();
+  actionTests();
   assignTests();
   guardTests();
 });

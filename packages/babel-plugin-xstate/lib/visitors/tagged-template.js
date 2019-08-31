@@ -11,18 +11,18 @@ function transform(t, path) {
   } = path.node;
 
   let strings = quasis.map(node => node.value.cooked);
-  let args = []; // TODO fix this later
-
+  let args = expressions;
 
   let lucyAst = parseTemplate(strings, ...args);
-
   let [configAst, optionsAst] = createConfig(t, lucyAst);
 
+  let machineArgs = [ configAst ];
 
-  path.replaceWith(t.callExpression(t.identifier('Machine'), [
-    configAst,
-    //optionsAst
-  ]));
+  if(optionsAst) {
+    machineArgs.push(optionsAst);
+  }
+
+  path.replaceWith(t.callExpression(t.identifier('Machine'), machineArgs));
 }
 
 module.exports = function(t, path, state) {
