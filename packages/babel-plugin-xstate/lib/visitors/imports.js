@@ -1,8 +1,16 @@
 
+function hasImportName(imp, name) {
+  return imp.node.specifiers.some(spec => {
+    return spec.imported.name === name;
+  });
+}
+
 module.exports = function(t, path, state) {
   if(!state.lucyXstateImport) {
     return;
   }
+
+  const { needsXstateAssign } = state;
 
   if(!state.xstateImport) {
     let imp = t.importDeclaration([
@@ -17,14 +25,21 @@ module.exports = function(t, path, state) {
     state.lucyXstateImport.replaceWith(imp);
   } else {
     let imp = state.xstateImport;
-    let hasMachine = imp.node.specifiers.some(spec => {
-      return spec.imported.name === 'Machine'
-    });
+    let hasMachine = hasImportName(imp, 'Machine');
 
     if(!hasMachine) {
       imp.node.specifiers.unshift(
         t.importSpecifier(t.identifier('Machine'), t.identifier('Machine'))
       );
+    }
+
+    if(needsXstateAssign) {
+      let hasAssign = hasImportName(imp, 'assign');
+      if(!hasAssign) {
+        imp.node.specifiers.push(
+          t.importSpecifier(t.identifier('assign'), t.identifier('assign'))
+        );
+      }
     }
 
     // Remove @lucy/xstate import
