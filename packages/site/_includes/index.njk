@@ -31,7 +31,7 @@ title: Lucy
             {{ post.data.title }}
           {% endif %}
         {% else %}
-        <a href="{{ post.url }}">
+        <a href="{{ post.url | url }}">
           {% if post.data.shortTitle %}
             {{ post.data.shortTitle }}
           {% else %}
