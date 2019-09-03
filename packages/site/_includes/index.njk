@@ -6,6 +6,7 @@ title: Lucy
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ title }}</title>
+<base href="{{ page.url | baseUrl }}">
 <link rel="stylesheet" href="styles/main.css">
 <link rel="stylesheet" href="styles/dracula-prism.css">
 
@@ -31,7 +32,7 @@ title: Lucy
             {{ post.data.title }}
           {% endif %}
         {% else %}
-        <a href="{{ post.url | url }}">
+        <a href="{{ post.url | bareUrl }}">
           {% if post.data.shortTitle %}
             {{ post.data.shortTitle }}
           {% else %}
