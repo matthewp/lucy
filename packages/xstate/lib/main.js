@@ -79,8 +79,8 @@ function createConfig(ast) {
             let invoke = {
               src: child.value.getValue()
             };
-            for(let { event, target } of child.children) {
-              invoke[invokeEventMap.get(event)] = { target };
+            for(let { actions, event, target } of child.children) {
+              invoke[invokeEventMap.get(event)] = { target, actions };
             }
             state.invoke = invoke;
           } else if(child.isState()) {

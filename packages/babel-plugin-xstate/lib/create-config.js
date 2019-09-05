@@ -135,15 +135,26 @@ function createConfig(t, ast) {
                 c.event === 'error' ? 'onError' : null;
 
               if(propName) {
+                let invokeTransitionProps = [
+                  t.objectProperty(
+                    t.identifier('target'),
+                    t.stringLiteral(c.target)
+                  )
+                ];
+
+                if(c.actions && c.actions.length) {
+                  invokeTransitionProps.push(
+                    t.objectProperty(
+                      t.identifier('actions'),
+                      t.arrayExpression(c.actions.map(n => t.stringLiteral(n)))
+                    )
+                  );
+                }
+
                 invokeProps.push(
                   t.objectProperty(
                     t.identifier(propName),
-                    t.objectExpression([
-                      t.objectProperty(
-                        t.identifier('target'),
-                        t.stringLiteral(c.target)
-                      )
-                    ])
+                    t.objectExpression(invokeTransitionProps)
                   )
                 );
               }

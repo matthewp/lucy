@@ -12,6 +12,17 @@ module.exports = function(t, path, state) {
 
   const { needsXstateAssign } = state;
 
+  function maybeAddAssign(imp) {
+    if(needsXstateAssign) {
+      let hasAssign = hasImportName(imp, 'assign');
+      if(!hasAssign) {
+        imp.node.specifiers.push(
+          t.importSpecifier(t.identifier('assign'), t.identifier('assign'))
+        );
+      }
+    }
+  }
+
   if(!state.xstateImport) {
     let imp = t.importDeclaration([
         t.importSpecifier(
@@ -22,6 +33,7 @@ module.exports = function(t, path, state) {
       t.stringLiteral('xstate')
     );
 
+    maybeAddAssign({ node: imp });
     state.lucyXstateImport.replaceWith(imp);
   } else {
     let imp = state.xstateImport;
@@ -33,14 +45,7 @@ module.exports = function(t, path, state) {
       );
     }
 
-    if(needsXstateAssign) {
-      let hasAssign = hasImportName(imp, 'assign');
-      if(!hasAssign) {
-        imp.node.specifiers.push(
-          t.importSpecifier(t.identifier('assign'), t.identifier('assign'))
-        );
-      }
-    }
+    maybeAddAssign(imp);
 
     // Remove @lucy/xstate import
     state.lucyXstateImport.remove();
