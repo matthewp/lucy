@@ -67,4 +67,24 @@ export default function() {
       assert.equal(service.state.value, 'end', 'got to the end state');
     });
   });
+
+  QUnit.test('actions performed after invoke', async assert => {
+    let m = machine`
+      context ${{ val: 0 }}
+      action setVal = assign val ${(c, ev) => ev.data}
+
+      initial state start {
+        invoke ${Promise.resolve(11)} {
+          done => setVal => end
+        }
+      }
+
+      final state end {}
+    `;
+
+    await withService(m, async service => {
+      await Promise.resolve();
+      assert.equal(service.state.context.val, 11, 'assigned the value');
+    });
+  });
 }
