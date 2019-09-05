@@ -8,6 +8,10 @@
     "build": "rollup -c rollup.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "dist",
+    "lib"
+  ],
   "keywords": [],
   "author": "Matthew Phillips",
   "license": "BSD-2-Clause",
