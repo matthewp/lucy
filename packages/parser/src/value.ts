@@ -1,10 +1,11 @@
+import type { ExternalNode, Node } from './types.js';
 
 const values = new WeakMap();
 
-export function setValue(node, nodeWithValue) {
+export function setValue(node: Node, nodeWithValue: ExternalNode | Node) {
   let value;
   if(nodeWithValue.isExternal()) {
-    value = nodeWithValue.value;
+    value = (nodeWithValue as ExternalNode).value;
   } else if(nodeWithValue.isAssign()) {
     value = nodeWithValue;
   } else {
@@ -14,7 +15,7 @@ export function setValue(node, nodeWithValue) {
   values.set(node, value);
 }
 
-export function getValue(node) {
+export function getValue(node: Node) {
   if(values.has(node)) {
     return values.get(node);
   }

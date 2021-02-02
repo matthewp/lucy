@@ -1,12 +1,19 @@
+import type { Node } from './types.js';
+import type { State } from './state.js';
+
+type ScopeBaseType = {
+  addBinding: (arg0: string, arg1: Node) => void;
+  find: (arg0: string) => Node | null;
+}
 
 let scopeBase = Object.create(Object.prototype, {
   addBinding: {
-    value(name, node) {
+    value(name: string, node: Node) {
       this.bindings.set(name, node);
     }
   },
   find: {
-    value(identifier) {
+    value(identifier: string) {
       let scope = this;
       while(scope) {
         if(scope.bindings.has(identifier)) {
@@ -18,9 +25,14 @@ let scopeBase = Object.create(Object.prototype, {
       return null;
     }
   }
-});
+}) as ScopeBaseType;
 
-export function createScope(state) {
+export type Scope = typeof scopeBase & {
+  bindings: Map<string, Node>;
+  parent: Scope | null;
+}
+
+export function createScope(state: State): void {
   let scope = Object.create(scopeBase, {
     bindings: {
       value: new Map()
