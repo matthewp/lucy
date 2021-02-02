@@ -75,14 +75,8 @@ function extendType(typeName: string, desc: PropertyDescriptorMap) {
   return Object.create(type, desc) as Node;
 }
 
-const actionType = extendType('action', {});
+
 const stateType = extendType('state', {});
-
-export type GuardNode = Omit<Node, 'type'> & {
-  type: 'guard'
-};
-
-const guardType = extendType('guard', {});
 
 const transitionType = extendType('transition', {});
 const contextType = extendType('context', {
@@ -96,7 +90,15 @@ const invokeType = extendType('invoke', {});
 const assignmentType = extendType('assignment', {});
 const assignType = extendType('assign', {});
 
-export function createAction(name: string) {
+export type ActionNode = Omit<Node, 'type'> & {
+  type: 'action',
+  name: string;
+  assign: string | null;
+};
+
+const actionType = extendType('action', {});
+
+export function createAction(name: string): ActionNode {
   return Object.create(actionType, {
     name: valueEnumerable(name),
     assign: valueEnumerableWritable(null)
@@ -121,6 +123,13 @@ export function createState(name: string, { modifiers }: { modifiers: Set<'initi
     children: valueEnumerable([])
   });
 }
+
+export type GuardNode = Omit<Node, 'type'> & {
+  type: 'guard',
+  name: string;
+};
+
+const guardType = extendType('guard', {});
 
 export function createGuard(name: string): GuardNode {
   return Object.create(guardType, {

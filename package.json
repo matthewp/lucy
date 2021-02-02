@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build:parser": "tsc -b packages/parser/tsconfig.json",
+    "build:xstate": "tsc -b packages/xstate/tsconfig.json",
     "bundle:parser": "cd packages/parser && npm run bundle",
     "bundle:xstate": "cd packages/xstate && npm run bundle",
     "server": "http-server -p 1931",
