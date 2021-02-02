@@ -4,8 +4,9 @@
   "description": "",
   "main": "dist/lucy-xstate.cjs",
   "module": "lib/main.js",
+  "types": "dist/main.d.ts",
   "scripts": {
-    "build": "rollup -c rollup.config.js",
+    "bundle": "rollup -c rollup.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [

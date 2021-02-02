@@ -1,3 +1,11 @@
+/**
+ * @typedef { import('xstate').MachineConfig } MachineConfig
+ * @typedef { import('xstate').MachineOptions } MachineOptions
+ * 
+ * @typedef { import('@lucy/parser').ActionNode } ActionNode
+ * @typedef { import('@lucy/parser').GuardNode } GuardNode
+ */
+
 import { Machine, assign } from 'xstate';
 import { parseTemplate } from '@lucy/parser';
 
@@ -18,10 +26,19 @@ function createConfig(ast) {
     guards: {}
   };
 
+  /**
+   * 
+   * @param {GuardNode} node 
+   */
   function addGuard(node) {
     options.guards[node.name] = node.getValue();
   }
 
+  /**
+   * Add an action
+   * @param {ActionNode} actionNode 
+   * @param {*} rightNode 
+   */
   function addAction(actionNode, rightNode) {
     let value = actionNode.getValue();
     if(value && value.isAssign && value.isAssign()) {
@@ -106,7 +123,9 @@ function createConfig(ast) {
       } else if(node.isContext()) {
         config.context = node.getValue();
       } else if(node.isGuard()) {
-        addGuard(node);
+        /** @type {GuardNode} */
+        let guardNode = node;
+        addGuard(guardNode);
       } else if(node.isAssignment()) {
         if(node.left.isGuard()) {
           addGuard(node.left);
@@ -124,13 +143,18 @@ function createConfig(ast) {
   return [config, options];
 }
 
-function machineConfig() {
-  let ast = parseTemplate.apply(null, arguments);
+function machineConfig(...args) {
+  let ast = parseTemplate(...args);
   return createConfig(ast);
 }
 
-function machine() {
-  let [config, options] = machineConfig.apply(null, arguments);
+/**
+ * 
+ * @param  {string[]} strings
+ * @param  {...any} values 
+ */
+function machine(...args) {
+  let [config, options] = machineConfig(...args)
   return Machine(config, options);
 }
 
