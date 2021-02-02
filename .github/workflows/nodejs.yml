@@ -24,6 +24,7 @@ jobs:
         yarn
         npm run server &
         npm run build:parser
+        npm run build:xstate
         npm run bundle:parser
         npm run bundle:xstate
         npm run test-xstate
