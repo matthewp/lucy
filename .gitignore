@@ -1,4 +1,5 @@
 node_modules/
 packages/site/_site
+packages/parser/lib
 pkg/
 dist/

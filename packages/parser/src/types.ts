@@ -1,4 +1,23 @@
+import type { State } from './state.js';
 import { getValue } from './value.js';
+import { currentNodeSymbol } from './constants.js';
+
+export interface Node {
+  type: string; // TODO better type
+  assign?: null;
+  children?: Nodes;
+  isAction: () => boolean;
+  isAssignAction: () => boolean;
+  isGuard: () => boolean;
+  isState: () => boolean;
+  isTransition: () => boolean;
+  isContext: () => boolean;
+  isInvoke: () => boolean;
+  isAssignment: () => boolean;
+  isExternal: () => boolean;
+  isAssign: () => boolean;
+  getValue: () => any;
+}
 
 const type = {
   isAction() {
@@ -34,16 +53,16 @@ const type = {
   getValue() {
     return getValue(this);
   }
-};
+} as Node;
 
-function valueEnumerable(value) {
+function valueEnumerable(value: any) {
   return {
     enumerable: true,
     value
   };
 }
 
-function valueEnumerableWritable(value) {
+function valueEnumerableWritable(value: any) {
   return {
     enumerable: true,
     writable: true,
@@ -51,14 +70,20 @@ function valueEnumerableWritable(value) {
   };
 }
 
-function extendType(typeName, desc) {
+function extendType(typeName: string, desc: PropertyDescriptorMap) {
   desc.type = valueEnumerable(typeName);
-  return Object.create(type, desc);
+  return Object.create(type, desc) as Node;
 }
 
 const actionType = extendType('action', {});
 const stateType = extendType('state', {});
+
+export type GuardNode = Omit<Node, 'type'> & {
+  type: 'guard'
+};
+
 const guardType = extendType('guard', {});
+
 const transitionType = extendType('transition', {});
 const contextType = extendType('context', {
   getValue: {
@@ -69,30 +94,23 @@ const contextType = extendType('context', {
 });
 const invokeType = extendType('invoke', {});
 const assignmentType = extendType('assignment', {});
-const externalType = extendType('external', {
-  getValue: {
-    value() {
-      return this.value;
-    }
-  }
-});
 const assignType = extendType('assign', {});
 
-export function createAction(name) {
+export function createAction(name: string) {
   return Object.create(actionType, {
     name: valueEnumerable(name),
     assign: valueEnumerableWritable(null)
   });
 }
 
-export function createAssign({ args: [ property, value ] }) {
+export function createAssign({ args: [ property, value ] }: State) {
   return Object.create(assignType, {
     property: valueEnumerable(property),
     value: valueEnumerable(value)
   });
 }
 
-export function createState(name, { modifiers }) {
+export function createState(name: string, { modifiers }: { modifiers: Set<'initial' | 'final'> }) {
   let initial = modifiers.has('initial');
   let final = modifiers.has('final');
 
@@ -104,13 +122,13 @@ export function createState(name, { modifiers }) {
   });
 }
 
-export function createGuard(name) {
+export function createGuard(name: string): GuardNode {
   return Object.create(guardType, {
     name: valueEnumerable(name)
   });
 }
 
-export function createTransition(event, target, actions, cond) {
+export function createTransition(event: string, target: string, actions: any[] = [], cond?: string) {
   return Object.create(transitionType, {
     event: valueEnumerable(event),
     target: valueEnumerable(target),
@@ -119,28 +137,56 @@ export function createTransition(event, target, actions, cond) {
   });
 }
 
-export function createContext(n, s, externalNode) {
+export function createContext(n: any, s: any, externalNode: ExternalNode) {
   return Object.create(contextType, {
     value: valueEnumerable(externalNode)
   });
 }
 
-export function createInvoke({ args: [ value ] }) {
+type InvokeNode = Node & {
+  children: Node[]
+}
+
+export function createInvoke({ args: [ value ] }: State): InvokeNode {
   return Object.create(invokeType, {
     value: valueEnumerable(value),
     children: valueEnumerable([])
   });
 }
 
-export function createAssignment() {
+export interface AssignmentNode extends Node {
+  type: 'assignment';
+  left: Node | null;
+  right: Node | null;
+}
+
+export function createAssignment(): AssignmentNode {
   return Object.create(assignmentType, {
     left: valueEnumerableWritable(null),
     right: valueEnumerableWritable(null)
   });
 }
 
-export function createExternal(value) {
+export interface ExternalNode extends Node {
+  type: 'external',
+  value: any;
+  getValue: () => any;
+}
+
+const externalType = extendType('external', {
+  getValue: {
+    value() {
+      return this.value;
+    }
+  }
+});
+
+export function createExternal(value: any): ExternalNode {
   return Object.create(externalType, {
     value: valueEnumerable(value)
   });
+}
+
+export interface Nodes extends Array<Node> {
+  [currentNodeSymbol]: () => Node;
 }

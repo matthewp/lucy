@@ -1,3 +1,6 @@
+import type { State } from './state.js';
+import type { AssignmentNode, ExternalNode, Node } from './types.js';
+import type { Scope } from './scope.js';
 import { HOLE, currentNodeSymbol } from './constants.js';
 import { createScope } from './scope.js';
 import {
@@ -13,6 +16,7 @@ import {
   addNode,
   endStatement
 } from './state.js';
+
 import {
   createAction as createActionNode,
   createAssign as createAssignNode,
@@ -28,7 +32,20 @@ import {
 const WHITESPACE = /\s/;
 const LETTERS = /[a-z]/i;
 
-const bindings = new Map([
+type OnExternalCallback = any;
+
+type ModifierType = 'initial' | 'final';
+
+interface BindingValue {
+  modifiers?: Array<ModifierType>;
+  create: typeof createContextNode | typeof createActionNode | typeof createGuardNode | typeof createStateNode
+}
+
+type BindingType = 'context' | 'var' | 'action' | 'guard' | 'state';
+
+type BindingMap = Map<BindingType, BindingValue>;
+
+const bindings: BindingMap = new Map([
   ['context', {
     create: createContextNode
   }],
@@ -47,7 +64,11 @@ const bindings = new Map([
   }]
 ]);
 const modifiers = new Set(['initial', 'final']);
-const methods = new Map([
+
+type MethodType = 'assign' | 'invoke';
+type MethodMap = Map<MethodType, { create: typeof createAssignNode | typeof createInvokeNode }>;
+
+const methods: MethodMap = new Map([
   ['assign', {
     create: createAssignNode
   }],
@@ -56,8 +77,8 @@ const methods = new Map([
   }]
 ])
 
-function endExpression(state, name, onExternal) {
-  let expression = state.expressions;
+function endExpression(state: State, name: string, onExternal: OnExternalCallback) {
+  let expression = state.expressions as BindingType;
   let externalNode;
   if(isHole(state)) {
     externalNode = createExternalNode(onExternal());
@@ -67,18 +88,20 @@ function endExpression(state, name, onExternal) {
     state.expressions = '';
 
     if(bindings.has(expression)) {
-      let binding = bindings.get(expression);
-      let node = binding.create(name, state, externalNode);
-      state.scope.addBinding(name, node);
+      let binding = bindings.get(expression)!;
+      let node = binding.create(name, state, externalNode as ExternalNode);
+      if(state.scope) {
+        state.scope.addBinding(name, node);
+      }
       addNode(state, node);
       clearModifiers(state);
-    } else if(methods.has(expression)) {
+    } else if(methods.has(expression as MethodType)) {
       if(externalNode) {
         state.args.push(externalNode);
       }
 
-      let method = methods.get(expression);
-      let node = method.create(state);
+      let method = methods.get(expression as MethodType);
+      let node = method!.create(state);
       addNode(state, node);
     } else {
       throw new Error(`Unknown expression ${expression}`);
@@ -91,13 +114,13 @@ function endExpression(state, name, onExternal) {
   }*/
 }
 
-function endTransition(state) {
-  if(inWord(state)) {
+function endTransition(state: State) {
+  if(inWord(state) && Array.isArray(state.transitionQueue)) {
     state.transitionQueue.push(state.word);
   }
 
   let transitionEvent = state.transitionEvent;
-  let queue = state.transitionQueue;
+  let queue = state.transitionQueue || [];
   resetTransition(state);
 
   let transitionTo;
@@ -105,7 +128,7 @@ function endTransition(state) {
   let cond;
 
   for(let identifier of queue) {
-    let identifierNode = state.scope.find(identifier);
+    let identifierNode = state.scope!.find(identifier);
     if(identifierNode) {
       if(identifierNode.isAction()) {
         transitionTo = null;
@@ -123,11 +146,20 @@ function endTransition(state) {
     }
   }
 
-  let node = createTransitionNode(transitionEvent, transitionTo, actions, cond);
+  if(!transitionTo) {
+    throw new Error('Expected a state to transition to');
+  }
+
+  let node = createTransitionNode(transitionEvent!, transitionTo, actions, cond);
   addNode(state, node);
 }
 
-function assignmentNodes(assignment) {
+interface AssignmentNodes {
+  [currentNodeSymbol]: () => AssignmentNode;
+  push: (node: Node) => void;
+}
+
+function assignmentNodes(assignment: AssignmentNode) {
   return Object.create(Object.prototype, {
     [currentNodeSymbol]: {
       enumerable: false,
@@ -137,7 +169,7 @@ function assignmentNodes(assignment) {
     },
     push: {
       enumerable: true,
-      value(val) {
+      value(val: Node) {
         let hasPushedLeft = !!assignment.left;
         assignment[hasPushedLeft ? 'right' : 'left'] = val;
       }
@@ -145,10 +177,10 @@ function assignmentNodes(assignment) {
   });
 }
 
-function parse(input, onExternal) {
+function parse(input: string, onExternal: () => OnExternalCallback) {
   let current = 0;
   let length = input.length;
-  let char;
+  let char: string;
 
   let state = createState();
   let body = state.nodes;
@@ -200,13 +232,12 @@ function parse(input, onExternal) {
           // TODO should we be doing something with this?
         } else if(modifiers.has(word)) {
           addModifier(state, word);
-        } else if(bindings.has(word)) {
-          //let node = bindings.get(word).create(word, state);
+        } else if(bindings.has(word as BindingType)) {
           addBinding(state, word);
         } else if(state.inTransition) {
-          state.transitionQueue.push(word);
+          state.transitionQueue!.push(word);
           resetWord(state);
-        } else if(methods.has(word)) {
+        } else if(methods.has(word as MethodType)) {
           addBinding(state, word);
           state.inMethodInvocation = true;
           state.args = [];
@@ -237,7 +268,7 @@ function parse(input, onExternal) {
       resetWord(state);
       createScope(state);
       let currentNode = state.lastNode();
-      let newNodes = currentNode.children;
+      let newNodes = currentNode.children!;
       state.parentNodes = state.nodes;
       state.parentNodeMap.set(newNodes, state.parentNodes);
       state.nodes = newNodes;
@@ -245,9 +276,9 @@ function parse(input, onExternal) {
 
     // End scope
     if(char === '}') {
-      state.scope = state.scope.parent;
+      state.scope = state.scope!.parent;
       state.nodes = state.parentNodes;
-      state.parentNodes = state.parentNodeMap.get(state.nodes)|| null;
+      state.parentNodes = state.parentNodeMap.get(state.nodes!) || null;
     }
 
     // Special case holes
