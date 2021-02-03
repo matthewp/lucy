@@ -11,7 +11,7 @@ export default function() {
       action pong = ${() => count++}
 
       initial state start {
-        ping => pong => start
+        ping => pong
       }
     `;
 

@@ -6,10 +6,12 @@ const m = Machine({
     "one": {
       on: {
         "foo": {
-          target: "two"
+          target: "two",
+          actions: []
         },
         "bar": {
-          target: "three"
+          target: "three",
+          actions: []
         }
       }
     },

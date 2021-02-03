@@ -7,7 +7,7 @@
     "build:xstate": "cd packages/xstate && npm run build",
     "server": "wds -p 1931",
     "test-xstate": "node-qunit-puppeteer http://localhost:1931/packages/xstate/test/test.html 10000 ",
-    "test-babel-xstate": "mocha packages/babel-plugin-xstate/test.js"
+    "test-babel-xstate": "cd packages/babel-plugin-xstate && npm test"
   },
   "workspaces": [
     "packages/*"

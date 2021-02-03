@@ -4,7 +4,7 @@ import { currentNodeSymbol } from './constants.js';
 
 export interface Node {
   type: string; // TODO better type
-  assign?: null;
+  assign?: string | null;
   children?: Nodes;
   isAction: () => boolean;
   isAssignAction: () => boolean;
@@ -78,19 +78,11 @@ function extendType(typeName: string, desc: PropertyDescriptorMap) {
 
 const stateType = extendType('state', {});
 
-const transitionType = extendType('transition', {});
-const contextType = extendType('context', {
-  getValue: {
-    value() {
-      return this.value.value;
-    }
-  }
-});
 const invokeType = extendType('invoke', {});
 const assignmentType = extendType('assignment', {});
 const assignType = extendType('assign', {});
 
-export type ActionNode = Omit<Node, 'type'> & {
+export interface ActionNode extends Node {
   type: 'action',
   name: string;
   assign: string | null;
@@ -124,7 +116,7 @@ export function createState(name: string, { modifiers }: { modifiers: Set<'initi
   });
 }
 
-export type GuardNode = Omit<Node, 'type'> & {
+export interface GuardNode extends Node {
   type: 'guard',
   name: string;
 };
@@ -137,7 +129,17 @@ export function createGuard(name: string): GuardNode {
   });
 }
 
-export function createTransition(event: string, target: string, actions: any[] = [], cond?: string) {
+export interface TransitionNode extends Node {
+  type: 'transition';
+  event: string;
+  target: string | null;
+  actions: any[];
+  cond: string | undefined;
+}
+
+const transitionType = extendType('transition', {});
+
+export function createTransition(event: string, target: string | null, actions: any[] = [], cond?: string): TransitionNode {
   return Object.create(transitionType, {
     event: valueEnumerable(event),
     target: valueEnumerable(target),
@@ -146,14 +148,28 @@ export function createTransition(event: string, target: string, actions: any[] =
   });
 }
 
-export function createContext(n: any, s: any, externalNode: ExternalNode) {
+interface ContextNode extends Node {
+  type: 'context';
+  getValue: () => any;
+  value: ExternalNode;
+}
+
+const contextType = extendType('context', {
+  getValue: {
+    value(this: ContextNode) {
+      return this.value.value;
+    }
+  }
+});
+
+export function createContext(n: any, s: any, externalNode: ExternalNode): ContextNode {
   return Object.create(contextType, {
     value: valueEnumerable(externalNode)
   });
 }
 
-type InvokeNode = Node & {
-  children: Node[]
+interface InvokeNode extends Node {
+  type: 'invoke';
 }
 
 export function createInvoke({ args: [ value ] }: State): InvokeNode {
@@ -184,7 +200,7 @@ export interface ExternalNode extends Node {
 
 const externalType = extendType('external', {
   getValue: {
-    value() {
+    value(this: ExternalNode) {
       return this.value;
     }
   }
