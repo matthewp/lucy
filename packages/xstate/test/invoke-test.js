@@ -69,12 +69,14 @@ export default function() {
   });
 
   QUnit.test('actions performed after invoke', async assert => {
+    const setVal = (_, ev) => ev.data;
+
     let m = machine`
       context ${{ val: 0 }}
-      action setVal = assign val ${(c, ev) => ev.data}
+      action setVal = assign val ${setVal}
 
       initial state start {
-        invoke ${Promise.resolve(11)} {
+        invoke ${() => Promise.resolve(11)} {
           done => setVal => end
         }
       }

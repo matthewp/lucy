@@ -12,7 +12,8 @@ const m = Machine({
       on: {
         "go": {
           target: "next",
-          cond: "canProceed"
+          cond: "canProceed",
+          actions: []
         }
       }
     },

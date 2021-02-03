@@ -21,11 +21,19 @@ jobs:
       uses: ianwalter/puppeteer@v2.0.0
     - name: npm install, build, and test
       run: |
-        yarn
+        npm ci
+        cd packages/parser
+        npm ci
+        cd ../../packages/xstate
+        npm ci
+        cd ../../packages/babel-plugin-xstate
+        npm ci
+        cd ../..
+
         npm run server &
         npm run build:parser
-        npm run bundle:parser
-        npm run bundle:xstate
+        npm run build:parser:cjs
+        npm run build:xstate
         npm run test-xstate
         npm run test-babel-xstate
       env:

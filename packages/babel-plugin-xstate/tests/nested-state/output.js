@@ -8,7 +8,8 @@ const m = Machine({
         "innerOne": {
           on: {
             "go": {
-              target: "innerTwo"
+              target: "innerTwo",
+              actions: []
             }
           }
         },

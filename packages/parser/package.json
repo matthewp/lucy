@@ -1,13 +1,19 @@
 {
   "name": "@lucy/parser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Parser for the Lucy programming language",
-  "main": "dist/lucy-parser.cjs",
+  "main": "dist/dsl.js",
   "module": "lib/dsl.js",
   "types": "lib/dsl.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/dsl.js",
+      "require": "./dist/dsl.js"
+    }
+  },
   "scripts": {
-    "build": "tsc",
-    "bundle": "rollup -c rollup.config.js",
+    "build": "tsc -p tsconfig.json -d",
+    "build:cjs": "tsc -p tsconfig.json --module commonjs --outDir dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
@@ -19,9 +25,5 @@
   ],
   "author": "Matthew Phillips",
   "license": "BSD-2-Clause",
-  "devDependencies": {
-    "rollup": "^1.17.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-replace": "^2.2.0"
-  }
+  "devDependencies": {}
 }

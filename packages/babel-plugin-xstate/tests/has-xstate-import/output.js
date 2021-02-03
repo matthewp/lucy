@@ -6,14 +6,16 @@ const m = Machine({
     "enabled": {
       on: {
         "toggle": {
-          target: "disabled"
+          target: "disabled",
+          actions: []
         }
       }
     },
     "disabled": {
       on: {
         "toggle": {
-          target: "enabled"
+          target: "enabled",
+          actions: []
         }
       }
     }

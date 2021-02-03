@@ -1,6 +1,5 @@
 import type { State } from './state.js';
-import type { AssignmentNode, ExternalNode, Node } from './types.js';
-import type { Scope } from './scope.js';
+import type { AssignmentNode, ExternalNode, Node, Nodes } from './types.js';
 import { HOLE, currentNodeSymbol } from './constants.js';
 import { createScope } from './scope.js';
 import {
@@ -123,7 +122,7 @@ function endTransition(state: State) {
   let queue = state.transitionQueue || [];
   resetTransition(state);
 
-  let transitionTo;
+  let transitionTo = null;
   let actions;
   let cond;
 
@@ -146,20 +145,16 @@ function endTransition(state: State) {
     }
   }
 
-  if(!transitionTo) {
-    throw new Error('Expected a state to transition to');
-  }
-
   let node = createTransitionNode(transitionEvent!, transitionTo, actions, cond);
   addNode(state, node);
 }
 
-interface AssignmentNodes {
+interface AssignmentNodes extends Nodes {
   [currentNodeSymbol]: () => AssignmentNode;
-  push: (node: Node) => void;
+  push: (node: Node) => number;
 }
 
-function assignmentNodes(assignment: AssignmentNode) {
+function assignmentNodes(assignment: AssignmentNode): AssignmentNodes {
   return Object.create(Object.prototype, {
     [currentNodeSymbol]: {
       enumerable: false,
@@ -169,9 +164,10 @@ function assignmentNodes(assignment: AssignmentNode) {
     },
     push: {
       enumerable: true,
-      value(val: Node) {
+      value(this: AssignmentNodes, val: Node) {
         let hasPushedLeft = !!assignment.left;
         assignment[hasPushedLeft ? 'right' : 'left'] = val;
+        return this.length;
       }
     }
   });
