@@ -26,6 +26,8 @@ jobs:
         npm ci
         cd ../../packages/xstate
         npm ci
+        cd ../../packages/babel-plugin-xstate
+        npm ci
         cd ../..
 
         npm run server &
