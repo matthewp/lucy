@@ -1,6 +1,6 @@
 {
   "name": "@lucy/parser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Parser for the Lucy programming language",
   "main": "dist/dsl.js",
   "module": "lib/dsl.js",

@@ -10,7 +10,7 @@
   "author": "",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "@lucy/parser": "0.1.0"
+    "@lucy/parser": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
