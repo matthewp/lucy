@@ -12,8 +12,8 @@
     }
   },
   "scripts": {
-    "build": "tsc",
-    "bundle": "rollup -c rollup.config.js",
+    "build": "tsc -p tsconfig.json -d",
+    "build:cjs": "tsc -p tsconfig.json --module commonjs --outDir dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [

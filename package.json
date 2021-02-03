@@ -2,9 +2,9 @@
   "name": "lucy",
   "private": true,
   "scripts": {
-    "build:parser": "tsc -p packages/parser/tsconfig.json -d",
-    "build:parser:cjs": "tsc -p packages/parser/tsconfig.json --module commonjs --outDir packages/parser/dist",
-    "build:xstate": "tsc -p packages/xstate/tsconfig.json",
+    "build:parser": "cd packages/parser && npm run build",
+    "build:parser:cjs": "cd packages/parser && npm run build:cjs",
+    "build:xstate": "cd packages/xstate && npm run build",
     "server": "wds -p 1931",
     "test-xstate": "node-qunit-puppeteer http://localhost:1931/packages/xstate/test/test.html 10000 ",
     "test-babel-xstate": "mocha packages/babel-plugin-xstate/test.js"
