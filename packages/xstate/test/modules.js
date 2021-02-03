@@ -1,2 +1,2 @@
-export { machine } from '../dist/lucy-xstate.js';
+export { machine } from '../lib/main.js';
 export { interpret, Machine } from 'xstate';

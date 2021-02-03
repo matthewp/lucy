@@ -2,11 +2,10 @@
   "name": "lucy",
   "private": true,
   "scripts": {
-    "build:parser": "tsc -b packages/parser/tsconfig.json",
-    "build:xstate": "tsc -b packages/xstate/tsconfig.json",
-    "bundle:parser": "cd packages/parser && npm run bundle",
-    "bundle:xstate": "cd packages/xstate && npm run bundle",
-    "server": "wds -p 1931 --node-resolve",
+    "build:parser": "tsc -p packages/parser/tsconfig.json -d",
+    "build:parser:cjs": "tsc -p packages/parser/tsconfig.json --module commonjs --outDir packages/parser/dist",
+    "build:xstate": "tsc -p packages/xstate/tsconfig.json",
+    "server": "wds -p 1931",
     "test-xstate": "node-qunit-puppeteer http://localhost:1931/packages/xstate/test/test.html 10000 ",
     "test-babel-xstate": "mocha packages/babel-plugin-xstate/test.js"
   },
@@ -15,6 +14,7 @@
   ],
   "devDependencies": {
     "@web/dev-server": "^0.1.5",
+    "@web/dev-server-import-maps": "0.0.5",
     "node-qunit-puppeteer": "^1.0.13",
     "typescript": "^4.1.3"
   }
