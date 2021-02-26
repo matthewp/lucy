@@ -24,6 +24,9 @@
 			"include": "#state"
 		},
 		{
+			"include": "#machine"
+		},
+		{
 			"include": "#import-declaration"
 		}
 	],
@@ -120,6 +123,32 @@
 				{
 					"name": "meta.class.identifier.lucy",
 					"match": "\\b(state)\\b",
+					"captures": {
+						"1": {
+							"name": "storage.type.class.lucy"
+						}
+					}
+				}
+			]
+		},
+		"machine": {
+			"name": "meta.class.lucy",
+			"patterns": [
+				{
+					"name": "meta.class.identifier.lucy",
+					"match": "(machine)\\s+(\\w+)",
+					"captures": {
+						"1": {
+							"name": "storage.type.class.lucy"
+						},
+						"2": {
+							"name": "entity.name.type.class.lucy"
+						}
+					}
+				},
+				{
+					"name": "meta.class.identifier.lucy",
+					"match": "\\b(machine)\\b",
 					"captures": {
 						"1": {
 							"name": "storage.type.class.lucy"
