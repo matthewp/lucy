@@ -1,0 +1,11 @@
+import { thing } from './other.js'
+
+guard stopIt = thing
+
+state foo {
+  one => two
+}
+
+final state two {
+
+}

@@ -22,6 +22,9 @@
 		},
 		{
 			"include": "#state"
+		},
+		{
+			"include": "#import-declaration"
 		}
 	],
 	"repository": {
@@ -32,15 +35,64 @@
 			}]
 		},
 		"strings": {
-			"name": "string.quoted.double.lucy",
-			"begin": "\"",
-			"end": "\"",
 			"patterns": [
 				{
-					"name": "constant.character.escape.lucy",
-					"match": "\\\\."
+					"include": "#qstring-single"
+				},
+				{
+					"include": "#qstring-double"
 				}
 			]
+		},
+		"qstring-double": {
+			"name": "string.quoted.double.lucy",
+			"begin": "\"",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.begin.lucy"
+				}
+			},
+			"end": "(\")|((?:[^\\\\\\n])$)",
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.definition.string.end.lucy"
+				},
+				"2": {
+					"name": "invalid.illegal.newline.lucy"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#string-character-escape"
+				}
+			]
+		},
+		"qstring-single": {
+			"name": "string.quoted.single.lucy",
+			"begin": "'",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.begin.lucy"
+				}
+			},
+			"end": "(\\')|((?:[^\\\\\\n])$)",
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.definition.string.end.js"
+				},
+				"2": {
+					"name": "invalid.illegal.newline.lucy"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#string-character-escape"
+				}
+			]
+		},
+		"string-character-escape": {
+			"name": "constant.character.escape.lucy",
+			"match": "\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|u\\{[0-9A-Fa-f]+\\}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.|$)"
 		},
 		"blocks": {
 			"name": "punctuation.definition.block.lucy",
@@ -182,6 +234,116 @@
 							"name": "entity.name.function.lucy"
 						}
 					}
+				}
+			]
+		},
+		"comment": {
+			"patterns": [
+				{
+					"begin": "(^[ \\t]+)?((//)(?:\\s*((@)internal)(?=\\s|$))?)",
+					"beginCaptures": {
+						"1": {
+							"name": "punctuation.whitespace.comment.leading.lucy"
+						},
+						"2": {
+							"name": "comment.line.double-slash.lucy"
+						},
+						"3": {
+							"name": "punctuation.definition.comment.lucy"
+						},
+						"4": {
+							"name": "storage.type.internaldeclaration.lucy"
+						},
+						"5": {
+							"name": "punctuation.decorator.internaldeclaration.lucy"
+						}
+					},
+					"end": "(?=$)",
+					"contentName": "comment.line.double-slash.lucy"
+				}
+			]
+		},
+		"single-line-comment-consuming-line-ending": {
+			"begin": "(^[ \\t]+)?((//)(?:\\s*((@)internal)(?=\\s|$))?)",
+			"beginCaptures": {
+				"1": {
+					"name": "punctuation.whitespace.comment.leading.lucy"
+				},
+				"2": {
+					"name": "comment.line.double-slash.lucy"
+				},
+				"3": {
+					"name": "punctuation.definition.comment.lucy"
+				},
+				"4": {
+					"name": "storage.type.internaldeclaration.lucy"
+				},
+				"5": {
+					"name": "punctuation.decorator.internaldeclaration.lucy"
+				}
+			},
+			"end": "(?=^)",
+			"contentName": "comment.line.double-slash.js"
+		},
+		"import-block": {
+			"name": "meta.block.lucy",
+			"begin": "\\{",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.block.lucy"
+				}
+			},
+			"end": "\\}",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.block.lucy"
+				}
+			}
+		},
+		"import-declaration": {
+			"name": "meta.import.lucy",
+			"begin": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(?:(\\bexport)\\s+)?(?:(\\bdeclare)\\s+)?\\b(import)(?:\\s+(type)(?!\\s+from))?(?!\\s*[:\\(])(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.control.export.lucy"
+				},
+				"2": {
+					"name": "storage.modifier.lucy"
+				},
+				"3": {
+					"name": "keyword.control.import.lucy"
+				},
+				"4": {
+					"name": "keyword.control.type.lucy"
+				}
+			},
+			"end": "(?<!^import|[^\\._$[:alnum:]]import)(?=;|$|^)",
+			"patterns": [
+				{
+					"include": "#single-line-comment-consuming-line-ending"
+				},
+				{
+					"include": "#comment"
+				},
+				{
+					"include": "#strings"
+				},
+				{
+					"begin": "(?<=^import|[^\\._$[:alnum:]]import)(?!\\s*[\"'])",
+					"end": "\\bfrom\\b",
+					"endCaptures": {
+						"0": {
+							"name": "keyword.control.from.lucy"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#import-block"
+						}
+					]
+				},
+				{
+					"include": "#import-block"
 				}
 			]
 		}
